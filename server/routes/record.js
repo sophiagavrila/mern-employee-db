@@ -50,16 +50,61 @@ recordRoutes.route("/record/:id").get(function (req, res) {
         });
 })
 
-// adds a new record 
-recordRoutes.route("/record/add").post(function (req, response) {
+// Adds a new record 
+recordRoutes.route("/record/add").post(function (err, res) {
     let db_connect = dbo.getDb();
     let myobj = {
-      name: req.body.name,
-      position: req.body.position,
-      level: req.body.level,
+        name: req.body.name,
+        position: req.body.position,
+        level: req.body.level
     };
     db_connect.collection("records").insertOne(myobj, function (err, res) {
+        if (err) throw err;
+        response.json(res);
+    })
+})
+
+// This updates a record in the db by extracting id from the path
+recordRoutes.route("/update/:id").post(function (req, response) {
+    let db_connect = dbo.getDb();
+    // grabbing pk from the path
+    let myquery = { _id: ObjectId(req.params.id) };
+    
+    /**
+     * The $set operator replaces the value of a field with 
+     * the specified value.
+     * If the field does not exist, $set will add a 
+     * new field with the specified value
+     */
+    let newvalues = {
+      $set: {
+        name: req.body.name,
+        position: req.body.position,
+        level: req.body.level,
+      },
+    };
+    db_connect
+      .collection("records")
+      .updateOne(myquery, newvalues, function (err, res) {
+        if (err) throw err;
+        console.log("1 document updated");
+        response.json(res);
+      });
+});
+
+// This will delete a record by extracting the id from the path
+recordRoutes.route("/:id").delete((req, response) => {
+    let db_connect = dbo.getDb();
+    let myquery = { _id: ObjectId(req.params.id) };
+    db_connect.collection("records").deleteOne(myquery, function (err, obj) {
       if (err) throw err;
-      response.json(res);
+      console.log("1 document deleted");
+      response.json(obj);
     });
 });
+
+/**
+ * By exporting this encapsulated code using module.exports 
+ * we can import it anywhere else in our application and use it.
+ */
+module.exports = recordRoutes;
