@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-reouter";
+import { useNavigate } from "react-router";
 
 export default function Create() {
   /**
@@ -105,6 +105,18 @@ export default function Create() {
               onChange={(e) => updateForm({ level: e.target.value })}
             />
             <label htmlFor="positionSenior" className="form-check-label">Senior</label>
+          </div>
+          <div className="form-check form-check-inline">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="positionOptions"
+              id="positionSuper"
+              value="Super Developer"
+              checked={form.level === "Super Developer"}
+              onChange={(e) => updateForm({ level: e.target.value })}
+            />
+            <label htmlFor="positionSuper" className="form-check-label">Super Developer</label>
           </div>
         </div>
         <div className="form-group">
